@@ -5,8 +5,8 @@ import { UsersController } from './users.controllers';
 import { UsersService, IsUserAlreadyExist } from './users.services';
 import { DatabaseModule } from '../../configs/database/database.module';
 import { usersProviders } from './users.providers';
-import { AuthenticatorMiddleware } from '../../utils/middlewares/authenticator.middleware';
-import { logger } from '../../utils/middlewares/logger.middleware';
+import { AuthenticatorMiddleware } from '../middlewares/authenticator.middleware';
+import { logger } from '../middlewares/logger.middleware';
 
 @Module({
     // OTHER_WAY_MONGOOSE to add mongoose model

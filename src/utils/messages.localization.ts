@@ -1,5 +1,5 @@
 export const messages = {
-    isUserAlreadayExist:{
+    isUserAlreadyExist:{
         en: "user already exists",
         fr: "your lang ..."
     }

@@ -5,7 +5,12 @@ import { Request, Response } from 'express';
 import { map, catchError } from 'rxjs/operators';
 import { messages } from './messages.localization';
 
-export interface OutputResponse<T> {
+
+export enum NotificationType {
+    BANNER = "BANNER",
+}
+
+export interface IOutput<T> {
     data: T;
     meta: {
         date?: string
@@ -18,9 +23,6 @@ export interface OutputResponse<T> {
     }
 }
 
-export enum NotificationType {
-    BANNER = "BANNER",
-}
 export class ApiResponse<T> {
     constructor() {
         return this;
@@ -44,7 +46,7 @@ export class ApiResponse<T> {
     }
     notify(msg, type: NotificationType = NotificationType.BANNER) {
         this._notification = msg;
-        this._notifyBy = type ? type : NotificationType.BANNER ;
+        this._notifyBy = type ? type : NotificationType.BANNER;
         return this;
     }
     notifyDefault(msg) {
@@ -52,29 +54,31 @@ export class ApiResponse<T> {
         return this;
     }
     get output() {
-         let outout : OutputResponse<T> = {
+        let outout: IOutput<T> = {
             data: this._data,
             meta: {
                 date: new Date().toISOString(),
                 status: this._status,
                 developerMessage: this._error
             },
-            notification: {
-                type: this._notifyBy,
-                message: this._notification
-            }
+            ...(this._notification && {
+                notification: {
+                    type: this._notifyBy,
+                    message: this._notification
+                }
+            })
         }
         return outout;
     }
 }
 
 @Injectable()
-export class TransformApiInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
+export class ApiInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
     intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
         const ctx = context.switchToHttp();
         const response = ctx.getResponse();
         const request: Request = ctx.getRequest();
-       
+
         return next.handle().pipe(map(output => {
             // use outout meta status which is set by developer
             const status = output.meta.status;
@@ -88,19 +92,18 @@ export class TransformApiInterceptor<T> implements NestInterceptor<T, ApiRespons
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const ctx = context.switchToHttp();
+    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+        const ctx = context.switchToHttp();
         const response = ctx.getResponse();
         const request: Request = ctx.getRequest();
-    return next
-      .handle()
-      .pipe(
-        catchError(err => {
-            // console.log(err)
-            return throwError(new BadGatewayException())
-        }),
-      );
-  }
+        return next
+            .handle()
+            .pipe(
+                catchError(err => {
+                    return throwError(new BadGatewayException())
+                }),
+            );
+    }
 }
 
 @Catch(HttpException)
@@ -128,9 +131,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const api = new ApiResponse<any>();
         api.status(status);
         api.error(error);
-        api.notify(messages[error]? messages[error]["fr"] : "server issue ...")
+        api.notify(messages[error] ? messages[error]["fr"] : "server issue ...")
         return response
             .status(status)
-            .json(api.output);
+            .json(api.output || "Something bad happened");
     }
 }

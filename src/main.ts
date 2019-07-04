@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
+import { AppModule } from './configs/app/app.module';
 import { useContainer } from 'class-validator';
-import { logger } from './utils/middlewares/logger.middleware';
-import { TransformApiInterceptor, HttpExceptionFilter, ErrorsInterceptor } from './utils/api.response';
+import { logger } from './components/middlewares/logger.middleware';
+import { ApiInterceptor, HttpExceptionFilter, ErrorsInterceptor } from './utils/api.response';
 
 /// for different approaches just follow the tag
 /// OTHER_WAY
@@ -29,7 +29,7 @@ async function bootstrap() {
   // add global filter
    app.useGlobalFilters(new HttpExceptionFilter());
   //
-  app.useGlobalInterceptors(new TransformApiInterceptor());
+  app.useGlobalInterceptors(new ApiInterceptor());
   //app.useGlobalInterceptors(new ErrorsInterceptor());
 
 
