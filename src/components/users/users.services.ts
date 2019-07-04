@@ -30,20 +30,8 @@ export class UsersService {
         // put your crud functions go outside of constructor
     }
     async createUser(user: UserCreationDto): Promise<any> {
-        let x = new UserCreationDto();
-        x.name = user.name;
-        x.username = user.username;
-        return validate(x).then(async (errors) => {
-            console.log(errors)
-            if (errors.length > 0) {
-                console.log("validation failed. errors: ", errors);
-                return errors;
-            } else {
-                console.log("validation succeed");
-                const createdUser = new this.userModel(user)
-                return await createdUser.save();
-            }
-        })
+        const createdUser = new this.userModel(user);
+        return await createdUser.save();
         
     }
     async findAllUser(): Promise<IUser[]> {

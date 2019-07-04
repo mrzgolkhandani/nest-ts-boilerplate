@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { IUser , UserCreationDto } from "./users.model";
 import { UsersService } from './users.services';
+import { ForbiddenException } from '../../utils/exceptions.handlers';
+import { ApiResponse } from '../../utils/api.response';
 
-
+// global version is used instead 
+// @UseFilters(new HttpExceptionFilter())
 @Controller('users')
 export class UsersController {
     /**
@@ -18,14 +21,29 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {
         // all contorllers go outside of constructor
     }
-    
+    // global version is used instead 
+    // @UseFilters(new HttpExceptionFilter())
     @Post()
     async createUser(@Body() user: UserCreationDto): Promise<any> {
-        return await this.usersService.createUser(user);
+        const api = new ApiResponse<any>();
+        api.data(await this.usersService.createUser(user));
+        api.status(201);
+        return api.output;
+
     }
 
     @Get()
     async getAllUsers(): Promise<IUser[]> {
         return await this.usersService.findAllUser();
+    }
+
+    @Get('exception')
+    async testException(): Promise<IUser[]> {
+        // throw new HttpException({
+        //     status: HttpStatus.FORBIDDEN,
+        //     error: 'This is a custom message',
+        //   }, 403);
+        // or u can use below code => it should be approached
+        throw new ForbiddenException();
     }
 }
