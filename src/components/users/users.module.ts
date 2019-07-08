@@ -2,7 +2,8 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './users.model';
 import { UsersController } from './users.controllers';
-import { UsersService, IsUserAlreadyExist } from './users.services';
+import { UsersService } from './users.services';
+import { IsUserAlreadyExist } from './users.validators'
 import { DatabaseModule } from '../../configs/database/database.module';
 import { usersProviders } from './users.providers';
 import { AuthenticatorMiddleware } from '../middlewares/authenticator.middleware';

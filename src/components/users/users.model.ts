@@ -16,7 +16,7 @@ export interface IUser extends Document {
 
 // for class level validation use this
 import { ValidationArguments, Validate, Length, IsAlpha, NotEquals } from 'class-validator';
-import { IsUserAlreadyExist } from './users.services';
+import { IsUserAlreadyExist } from './users.validators';
 // see doc https://github.com/typestack/class-validator
 
 export class UserCreationDto {

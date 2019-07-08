@@ -1,12 +1,9 @@
 // users crud functions
-import { Model, Connection } from 'mongoose';
-import { Injectable, Inject } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser, UserCreationDto } from './users.model';
 
-// to control user inputs
-import { validate } from "class-validator";
-import {registerDecorator, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments} from "class-validator";
 
 
 @Injectable()
@@ -25,7 +22,7 @@ export class UsersService {
      */
 
      // OTHER_WAY_MONGOOSE to add mongoose model
-     // constructor(@InjectModel("UserModelToken") private readonly userModel: Model<IUser>) {}
+     // constructor(@Inject("UserModelToken") private readonly userModel: Model<IUser>) {}
     constructor(@InjectModel("User") private readonly userModel: Model<IUser>) {
         // put your crud functions go outside of constructor
     }
@@ -43,15 +40,3 @@ export class UsersService {
     }
 }
 
-
-
-@ValidatorConstraint({ name: 'isUserAlreadyExist', async: true })
-@Injectable()
-export class IsUserAlreadyExist implements ValidatorConstraintInterface {
-	constructor(protected readonly usersService: UsersService) {}
-
-	async validate(text: string) {
-		const user = await this.usersService.findUserByUsername(text);
-		return !user;
-	}
-}
