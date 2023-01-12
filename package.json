@@ -27,7 +27,7 @@
     "@nestjs/websockets": "^6.0.4",
     "@types/mongoose": "^5.5.7",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.9.1",
+    "class-validator": "^0.14.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "helmet": "^3.18.0",
